@@ -5,29 +5,25 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
 
     public Transform pointInit1;
     public Transform pointInit2;
     public float respoundTime = .1f;
 
     public GameObject prefab;
-    public static GameObject[] skillet;
-    public GameObject[] skillEditor;
+    public GameObject[] skillet;
 
-    public static int catchedBibs;
-    public static int carma;
+    public int catchedBibs;
+    public int carma;
 
     public static bool isGameGoing = false;
-
-    public GameObject mainMenuEditor;
-    public static GameObject menuPage;
-    public GameObject gamePanelEditor;
-    public static GameObject gamePanel;
-    public GameObject startPageEditor;
-    public static GameObject startPage;
+    
+    public GameObject menuPage;
+    public GameObject gamePanel;
+    public GameObject startPage;
     public GameObject startPageObject;
-    public static GameObject adPage;
-    public GameObject adPageEditor;
+    public GameObject adPage;
 
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI bonusText;
@@ -36,36 +32,35 @@ public class GameManager : MonoBehaviour
 
     public static bool wasNoAd = true;
 
-    public AudioSource audioPlayerEditor;
-    public static AudioSource audioPlayer;
+    public AudioSource audioPlayer;
+
+    void Awake()
+    {
+        if (!instance)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
         if (!PlayerPrefs.HasKey("score"))
             PlayerPrefs.SetInt("score", 0);
-        menuPage = mainMenuEditor;
-        gamePanel = gamePanelEditor;
-        adPage = adPageEditor;
-        startPage = startPageEditor;
-        audioPlayer = audioPlayerEditor;
 
-        skillet = skillEditor;
         prefab.GetComponent<Rigidbody2D>().freezeRotation = true;
         prefab.GetComponent<Rigidbody2D>().gravityScale = 0.2f;
     }
 
-    void Update()
+    public void UpdateScore()
     {
         scoreText.text = "" + catchedBibs;
         bonusText.text = "x" + (carma / 7 + 1);
-        if (!isGameGoing)
-        {
-            UpdateScore();
-        }
-    }
 
-    void UpdateScore()
-    {
         currentScoreText.text = "" + catchedBibs;
         if (catchedBibs > PlayerPrefs.GetInt("score"))
         {
@@ -89,7 +84,7 @@ public class GameManager : MonoBehaviour
         
     }
 
-    static void AdsTime()
+    void AdsTime()
     {
         isGameGoing = false;
         adPage.SetActive(true);
@@ -110,7 +105,7 @@ public class GameManager : MonoBehaviour
         EndGame();
     }
 
-    public static void LoseGame()
+    public void LoseGame()
     {
         if (wasNoAd)
         {
@@ -122,7 +117,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public static void EndGame()
+    public void EndGame()
     {
         if (catchedBibs > PlayerPrefs.GetInt("score"))
             PlayerPrefs.SetInt("score", catchedBibs);

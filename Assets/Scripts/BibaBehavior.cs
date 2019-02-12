@@ -27,7 +27,7 @@ public class BibaBehavior : MonoBehaviour
         Instantiate(bloodEffect, coord + new Vector3(0, 0.5f, 0), Quaternion.identity);
 
         System.Random rand = new System.Random();
-        foreach (GameObject bound in GameManager.skillet)
+        foreach (GameObject bound in GameManager.instance.skillet)
         {
             Instantiate(bound, coord, Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(new Vector3(-2f + (float)rand.NextDouble() * 4f, 4f, 0), ForceMode2D.Impulse);
         }
@@ -41,10 +41,11 @@ public class BibaBehavior : MonoBehaviour
         {
             Instantiate(tailSystem, pointOfCatchEffect.position, Quaternion.identity);
             DestroyImmediate(biba);
-            GameManager.audioPlayer.PlayOneShot(magicClip);
 
-            GameManager.catchedBibs += (GameManager.carma / 7 + 1);
-            GameManager.carma++;
+            GameManager.instance.audioPlayer.PlayOneShot(magicClip);
+            GameManager.instance.catchedBibs += (GameManager.instance.carma / 7 + 1);
+            GameManager.instance.carma++;
+            GameManager.instance.UpdateScore();
         }
     }
 
@@ -53,13 +54,16 @@ public class BibaBehavior : MonoBehaviour
         if (coll.tag == "ground")
         {
             KillMe();
-            GameManager.audioPlayer.PlayOneShot(deadClip);
-            GameManager.carma -= 7;
-            if (GameManager.carma < 0)
-                GameManager.carma = 0;
-            if (GameManager.carma <= 0 && GameManager.isGameGoing)
+
+            GameManager.instance.audioPlayer.PlayOneShot(deadClip);
+            GameManager.instance.carma -= 7;
+            GameManager.instance.UpdateScore();
+
+            if (GameManager.instance.carma < 0)
+                GameManager.instance.carma = 0;
+            if (GameManager.instance.carma <= 0 && GameManager.isGameGoing)
             {
-                GameManager.LoseGame();
+                GameManager.instance.LoseGame();
             }
         }
     }
